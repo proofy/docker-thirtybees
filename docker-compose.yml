@@ -1,0 +1,113 @@
+version: "2.3"
+
+volumes:
+  db:
+  data:
+
+services:
+  # https://docs.docker.com/docker-hub/builds/automated-testing/
+  #sut:
+  #  build:
+  #    context: ./test
+  #    dockerfile: Dockerfile
+  #  depends_on:
+  #    - thirtybees
+  #    - thirtybees_nginx
+  #  volumes_from:
+  #    - thirtybees
+  #  volumes:
+  #    - data:/var/www/html
+  #    - documents:/var/www/documents
+  #    - /etc/localtime:/etc/localtime:ro
+  #    - /etc/timezone:/etc/timezone:ro
+  #  environment:
+  #    - DOCKER_TEST_CONTAINER=thirtybees
+  #    - DOCKER_WEB_CONTAINER=thirtybees_nginx
+  #    - THIRTYBEES_DB_NAME=${THIRTYBEES_DB_NAME}
+  #    - THIRTYBEES_DB_USER=${THIRTYBEES_DB_USER}
+  #    - THIRTYBEES_DB_PASSWORD=${THIRTYBEES_DB_PASSWORD}
+
+  thirtybees:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args: 
+        - TAG=${TAG}
+        - VCS_REF=${VCS_REF}
+        - BUILD_DATE=${BUILD_DATE}
+    image: ${IMAGE_NAME}
+    container_name: thirtybees
+    #restart: always
+    depends_on:
+      thirtybees_db:
+        condition: service_healthy
+    links:
+      - thirtybees_db
+    expose:
+      - "9000"
+    #ports:
+    #  - "9090:9000"
+    volumes:
+      - data:/var/www/html
+      #- /srv/thirtybees/html:/var/www/html
+      #- /srv/thirtybees/documents:/var/www/documents
+      #- /srv/thirtybees/scripts:/var/www/scripts
+    environment:
+      - THIRTYBEES_DB_HOST=thirtybees_db # same as pgsql container name
+      - THIRTYBEES_DB_PORT=3306
+      - THIRTYBEES_DB_NAME=${THIRTYBEES_DB_NAME}
+      - THIRTYBEES_DB_USER=${THIRTYBEES_DB_USER}
+      - THIRTYBEES_DB_PASSWORD=${THIRTYBEES_DB_PASSWORD}
+      - THIRTYBEES_DB_ROOT_PASSWORD=${THIRTYBEES_DB_ROOT_PASSWORD}
+
+  thirtybees_db:
+    image: mariadb
+    container_name: thirtybees_db
+    #restart: always
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/healthcheck.sh"]
+      interval: 60s
+      retries: 5
+      #start-period: 10s
+    mem_limit: 256M
+    memswap_limit: 256M
+    expose:
+      - "3306"
+    #ports:
+    #  - "55432:5432"
+    volumes:
+      - db:/var/lib/mysql
+      #- /srv/thirtybees/db:/var/lib/postgresql/data
+    environment:
+      - MARIADB_DATABASE=${THIRTYBEES_DB_NAME}
+      - MARIADB_USER=${THIRTYBEES_DB_USER}
+      - MARIADB_PASSWORD=${THIRTYBEES_DB_PASSWORD}  
+      - MARIADB_ROOT_PASSWORD=${THIRTYBEES_DB_ROOT_PASSWORD}
+
+  thirtybees_nginx:
+    image: nginx:latest
+    container_name: thirtybees_nginx
+    #restart: always
+    expose:
+      - "80"
+    ports:
+      - "8080:80"
+    #  # If you need SSL connection
+    #  - "8443:443"
+    depends_on:
+      - thirtybees
+    links:
+      - thirtybees
+    volumes:
+      - data:/var/www/html
+      #- /srv/thirtybees/html:/var/www/html
+      - ./nginx/templates:/etc/nginx/templates
+      # Provide a custom nginx conf
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # If you need SSL connection, you can provide your own certificates
+      # - ./certs:/etc/letsencrypt
+      # - ./certs-data:/data/letsencrypt
+    environment:
+      - NGINX_HOST=localhost # set your local domain or your live domain
+      - NGINX_PHP_CGI=thirtybees:9000 # same as thirtybees container name
+
