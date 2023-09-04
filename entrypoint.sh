@@ -27,8 +27,14 @@ log "Updating Thirtybees users and group..."
 usermod -u "$WWW_USER_ID" www-data
 groupmod -g "$WWW_GROUP_ID" www-data
 
-log "Updating Thirtybees folder ownership..."
-chown -R www-data:www-data /var/www
+set
+log "source:"
+ls -al /usr/src/thirtybees/
+log "target:"
+ls -la
+log "Copy Thirtybees source..."
+cp -r /usr/src/thirtybees/* /var/www/html/
+ls -la
 
 
 if [ ! -d /var/www/html/conf/ ]; then
@@ -36,7 +42,10 @@ if [ ! -d /var/www/html/conf/ ]; then
 	mkdir -p /var/www/html/conf/
 fi
 
-php install/index_cli.php --step=${THRITYBEES_STEP} \
+log "Updating Thirtybees folder ownership..."
+chown -R www-data:www-data /var/www
+
+php ./install/index_cli.php --step=${THRITYBEES_STEP} \
 	--newsletter=${THRITYBEES_NEWSLETTER} \
 	--language=${THRITYBEES_LANGUAGE} \
 	--all_language=${THRITYBEES_ALL_LANGUAGE} \
@@ -57,7 +66,7 @@ php install/index_cli.php --step=${THRITYBEES_STEP} \
 	--send_email=${THRITYBEES_SEND__EMAIL}  \
 	--firstname=${THRITYBEES_FIRSTNAME} \
 	--lastname=${THRITYBEES_LASTNAME} \
-	--password=${THRITYBEES_PASSWORD}
+	--password=${THRITYBEES_PASSWORD} \
 	--license=${THRITYBEES_LICENSE}
 
 
@@ -66,10 +75,6 @@ if [ ! -d /var/www/htdocs ]; then
 	ln -s /var/www/html /var/www/htdocs
 fi
 
-if [ ! -d /var/www/scripts ]; then
-	log "Initializing Thirtybees scripts directory..."
-	cp /usr/src/dolibarr/scripts /var/www/scripts
-fi
 
 if [ -f /var/www/documents/install.lock ]; then
 	log "Updating Thirtybees installed version..."

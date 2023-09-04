@@ -56,11 +56,10 @@ RUN	docker-php-ext-install -j$(nproc) \
 RUN pecl install imagick && \
 	docker-php-ext-enable imagick && \
 	rm -rf /var/lib/apt/lists/* && \
-	mkdir -p /var/www/documents && \
 	chown -R www-data:root /var/www && \
 	chmod -R g=u /var/www
 
-VOLUME /var/www/html /var/www/documents /var/www/scripts
+VOLUME /var/www/html 
 
 # Runtime env var
 ENV 	THIRTYBEES_DB_ENGINE=InnoDB \
@@ -87,9 +86,10 @@ ENV 	THIRTYBEES_DB_ENGINE=InnoDB \
 
 # Build time env var
 ARG THIRTYBEES_VERSION=1.4.0
+ENV THIRTYBEES_VERSION=${THIRTYBEES_VERSION}
 
 # Get Thirtybees
-ADD https://github.com/thirtybees/thirtybees/archive/${THIRTYBEES_VERSION}/thirtybees-v${THIRTYBEES_VERSION}-php7.4.zip /tmp/thirtybees.zip
+ADD https://github.com/thirtybees/thirtybees/releases/download/${THIRTYBEES_VERSION}/thirtybees-v${THIRTYBEES_VERSION}-php7.4.zip /tmp/thirtybees.zip
 
 # Install Thirtybees from tag archive
 RUN set -ex && \
@@ -97,7 +97,7 @@ RUN set -ex && \
 	unzip -q /tmp/thirtybees.zip -d /tmp/thirtybees-${THIRTYBEES_VERSION} && \
 	rm /tmp/thirtybees.zip && \
 	mkdir -p /usr/src/thirtybees && \
-	cp -r "/tmp/thirtybees-${THIRTYBEES_VERSION}"/* /usr/src/thirtybees && \
+	cp -r "/tmp/thirtybees-${THIRTYBEES_VERSION}/"* /usr/src/thirtybees/ && \
 	rm -rf /tmp/thirtybees-${THIRTYBEES_VERSION} && \
 	echo "${THIRTYBEES_VERSION}" > /usr/src/thirtybees/.docker-image-version
 

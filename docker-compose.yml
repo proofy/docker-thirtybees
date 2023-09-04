@@ -39,8 +39,8 @@ services:
     container_name: thirtybees
     #restart: always
     depends_on:
-      thirtybees_db:
-        condition: service_healthy
+       - thirtybees_db
+        #  condition: service_healthy
     links:
       - thirtybees_db
     expose:
@@ -64,10 +64,10 @@ services:
     image: mariadb
     container_name: thirtybees_db
     #restart: always
-    healthcheck:
-      test: ["CMD", "/usr/local/bin/healthcheck.sh"]
-      interval: 60s
-      retries: 5
+    #    healthcheck:
+    #  test: ["CMD", "/usr/local/bin/healthcheck.sh"]
+    #  interval: 60s
+    #  retries: 5
       #start-period: 10s
     mem_limit: 256M
     memswap_limit: 256M
@@ -91,7 +91,7 @@ services:
     expose:
       - "80"
     ports:
-      - "8080:80"
+      - "8585:80"
     #  # If you need SSL connection
     #  - "8443:443"
     depends_on:
