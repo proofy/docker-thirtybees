@@ -27,11 +27,8 @@ log "Updating Thirtybees users and group..."
 usermod -u "$WWW_USER_ID" www-data
 groupmod -g "$WWW_GROUP_ID" www-data
 
+log "Env:"
 set
-log "source:"
-ls -al /usr/src/thirtybees/
-log "target:"
-ls -la
 log "Copy Thirtybees source..."
 cp -r /usr/src/thirtybees/* /var/www/html/
 ls -la
@@ -69,6 +66,7 @@ php ./install/index_cli.php --step=${THRITYBEES_STEP} \
 	--password=${THRITYBEES_PASSWORD} \
 	--license=${THRITYBEES_LICENSE}
 
+mv ./install ../
 
 if [ ! -d /var/www/htdocs ]; then
 	log "Adding a symlink to /var/www/htdocs..."
