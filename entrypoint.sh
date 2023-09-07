@@ -42,29 +42,29 @@ fi
 log "Updating Thirtybees folder ownership..."
 chown -R www-data:www-data /var/www
 
-php ./install/index_cli.php --step=${THRITYBEES_STEP} \
-	--newsletter=${THRITYBEES_NEWSLETTER} \
-	--language=${THRITYBEES_LANGUAGE} \
-	--all_language=${THRITYBEES_ALL_LANGUAGE} \
-	--timezone=${THRITYBEES_TIMEZONE} \
-	--country=${THRITYBEES_COUNTRY} \
-	--domain=${THRITYBEES_DOMAIN} \
-	--db_name=${THRITYBEES_DB_NAME} \
-	--db_server=${THRITYBEES_DB_HOST}:${THRITYBEES_DB_PORT} \
-	--db_user=${THRITYBEES_DB_USER} \
-	--db_password=${THRITYBEES_DB_PASSWORD} \
-	--db_clear=${THRITYBEES_DB_CLEAR} \
-	--db_create=${THRITYBEES_DB_CREATE} \
-	--prefix=${THRITYBEES_DB_PREFIX} \
-	--engine=${THRITYBEES_DB_ENGINE} \
-	--name=${THRITYBEES_NAME} \
-	--activity=${THRITYBEES_ACTIVITY} \
-	--email=${THRITYBEES_EMAIL}  \
-	--send_email=${THRITYBEES_SEND__EMAIL}  \
-	--firstname=${THRITYBEES_FIRSTNAME} \
-	--lastname=${THRITYBEES_LASTNAME} \
-	--password=${THRITYBEES_PASSWORD} \
-	--license=${THRITYBEES_LICENSE}
+php ./install/index_cli.php --step="${THIRTYBEES_STEP}" \
+	--newsletter="${THIRTYBEES_NEWSLETTER}" \
+	--language="${THIRTYBEES_LANGUAGE}" \
+	--all_language="${THIRTYBEES_ALL_LANGUAGE}" \
+	--timezone="${PHP_INI_DATE_TIMEZONE}" \
+	--country="${THIRTYBEES_COUNTRY}" \
+	--domain="${THIRTYBEES_DOMAIN}" \
+	--db_name="${THIRTYBEES_DB_NAME}" \
+	--db_server="${THIRTYBEES_DB_HOST}:${THIRTYBEES_DB_PORT}" \
+	--db_user="${THIRTYBEES_DB_USER}" \
+	--db_password="${THIRTYBEES_DB_PASSWORD}" \
+	--db_clear="${THIRTYBEES_DB_CLEAR}" \
+	--db_create="${THIRTYBEES_DB_CREATE}" \
+	--prefix="${THIRTYBEES_DB_PREFIX}" \
+	--engine="${THIRTYBEES_DB_ENGINE}" \
+	--name="${THIRTYBEES_NAME}" \
+	--activity="${THIRTYBEES_ACTIVITY}" \
+	--email="${THIRTYBEES_EMAIL}"  \
+	--send_email="${THIRTYBEES_SEND_EMAIL}"  \
+	--firstname="${THIRTYBEES_FIRSTNAME}" \
+	--lastname="${THIRTYBEES_LASTNAME}" \
+	--password="${THIRTYBEES_PASSWORD}" \
+	--license="${THIRTYBEES_LICENSE}"
 
 mv ./install ../
 
@@ -76,7 +76,7 @@ fi
 
 if [ -f /var/www/documents/install.lock ]; then
 	log "Updating Thirtybees installed version..."
-	echo "$image_version" > /var/www/documents/.docker-container-version
+	echo "${THIRTYBEES_VERSION}" > /var/www/documents/.docker-container-version
 fi
 
 log "Serving Thirtybees..."
