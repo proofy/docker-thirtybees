@@ -42,6 +42,8 @@ fi
 log "Updating Thirtybees folder ownership..."
 chown -R www-data:www-data /var/www
 
+if [ -d ./install ]; then
+
 php ./install/index_cli.php --step="${THIRTYBEES_STEP}" \
 	--newsletter="${THIRTYBEES_NEWSLETTER}" \
 	--language="${THIRTYBEES_LANGUAGE}" \
@@ -64,9 +66,9 @@ php ./install/index_cli.php --step="${THIRTYBEES_STEP}" \
 	--firstname="${THIRTYBEES_FIRSTNAME}" \
 	--lastname="${THIRTYBEES_LASTNAME}" \
 	--password="${THIRTYBEES_PASSWORD}" \
-	--license="${THIRTYBEES_LICENSE}"
-
-mv ./install ../
+	--license="${THIRTYBEES_LICENSE}" \
+ && mv ./install ../
+fi
 
 if [ ! -d /var/www/htdocs ]; then
 	log "Adding a symlink to /var/www/htdocs..."
