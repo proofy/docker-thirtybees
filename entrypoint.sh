@@ -45,7 +45,6 @@ chown -R www-data:www-data /var/www
 if [ -d ./install ]; then
 
 php ./install/index_cli.php --step="${THIRTYBEES_STEP}" \
-	--newsletter="${THIRTYBEES_NEWSLETTER}" \
 	--language="${THIRTYBEES_LANGUAGE}" \
 	--all_language="${THIRTYBEES_ALL_LANGUAGE}" \
 	--timezone="${PHP_INI_DATE_TIMEZONE}" \
